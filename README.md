@@ -11,6 +11,7 @@ AUTH_DOMAIN = "...",
 DATABASE_URL = "...",
 PROJECT_ID = "...",
 SENDER_ID = "..."`
+replace the placeholder values with: http://softauthor.com/learn-to-build-firebase-crud-app-with-javascript-part01-reading-data/#initialize-firebase-in-app-js
 
 If you are not sure where to find your Firebase app config object:
-/http://softauthor.com/learn-to-build-firebase-crud-app-with-javascript-part01-reading-data/#initialize-firebase-in-app-js
+http://softauthor.com/learn-to-build-firebase-crud-app-with-javascript-part01-reading-data/#initialize-firebase-in-app-js
