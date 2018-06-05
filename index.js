@@ -69,29 +69,36 @@ const addUserBtnUI = document.getElementById("add-user-btn");
 addUserBtnUI.addEventListener("click", addUserBtnClicked);
 
 // Create a new user Object: Inside the call back function, create a Firebase Database reference path where you want to insert the new user data.
-const usersRef = dbRef.child('users');
+function addUserBtnClicked(){
 
-// then, Get all the input fields from the Add User Form and cache them into an array variable addUserInputsUI like so.
-const addUserInputsUI = document.getElementsByClassName("user-input");
+    // then, Get all the input fields from the Add User Form and cache them into an array variable addUserInputsUI like so.
+    const addUserInputsUI = document.getElementsByClassName("user-input");
 
-// this object will hold the new user information
-let newUser = {};
+    // this object will hold the new user information
+    let newUser = {};
 
-// Now, Loop though addUserInputsUI array that has three input fields. 
-// loop through View to get the data for the model 
-for (let i = 0, len = addUserInputsUI.length; i < len; i++) {
+    // Now, Loop though addUserInputsUI array that has three input fields. 
+    // loop through View to get the data for the model 
+    for (let i = 0, len = addUserInputsUI.length; i < len; i++) {
 
-    // Then, Inside each iteration get the value of input attribute data-key and store it into the variable 'key'.
-    let key = addUserInputsUI[i].getAttribute('data-key');
-    // After that… create another variable called 'value' and store in it the actual user typed value.
-    let value = addUserInputsUI[i].value;
-    
-    //Assign the 'key' and 'value' variables to the newUser object on each iteration. So, you will have an object something like this.
-    // {
-    //     "age" : "21",
-    //     "email" : "rtamil@email.com",
-    //     "name" : "Raja Tamil"
-    // }
-    newUser[key] = value;
+        // Then, Inside each iteration get the value of input attribute data-key and store it into the variable 'key'.
+        let key = addUserInputsUI[i].getAttribute('data-key');
+        // After that… create another variable called 'value' and store in it the actual user typed value.
+        let value = addUserInputsUI[i].value;
+        
+        //Assign the 'key' and 'value' variables to the newUser object on each iteration. So, you will have an object something like this.
+        // {
+        //     "age" : "21",
+        //     "email" : "rtamil@email.com",
+        //     "name" : "Raja Tamil"
+        // }
+        newUser[key] = value;
+
+    }
+
+    // Push it to the Firebase Database:  Finally, push() method will go ahead insert the new user data to the Firebase Database in a given path which is in usersRef.
+    usersRef.push(newUser, function(){
+        console.log("data has been inserted");
+    })
 
 }
