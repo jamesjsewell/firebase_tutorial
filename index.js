@@ -22,7 +22,7 @@ const userDetailUI = document.getElementById("userDetail");
 usersRef.on("value", snap => {
 
     userListUI.innerHTML = ""
-    userDetailUI.innerHTML = ""
+    userDetailUI.innerHTML = "<p> click on a user to view their details </p>"
 
     snap.forEach(childSnap => {
 
@@ -32,26 +32,23 @@ usersRef.on("value", snap => {
         let $li = document.createElement("li");
 
         // edit icon
-        let editIconUI = document.createElement("span");
+        let editIconUI = document.createElement("button");
         editIconUI.class = "edit-user";
         editIconUI.innerHTML = " ✎";
         editIconUI.setAttribute("userid", key);
         editIconUI.addEventListener("click", editButtonClicked)
 
         // delete icon
-        let deleteIconUI = document.createElement("span");
+        let deleteIconUI = document.createElement("button");
         deleteIconUI.class = "delete-user";
         deleteIconUI.innerHTML = " ☓";
         deleteIconUI.setAttribute("userid", key);
         deleteIconUI.addEventListener("click", deleteButtonClicked)
         
-        $li.innerHTML = `<a class="userLink" href="">${value.name}</a>`;
+        $li.innerHTML = `<a user-key="${key}" onclick="userClicked(event)" class="userLink">${value.name}</a>`;
         $li.className = "a_user"
         $li.append(editIconUI);
         $li.append(deleteIconUI);
-
-        $li.setAttribute("user-key", key);
-        $li.addEventListener("click", userClicked)
         userListUI.append($li);
 
      });
@@ -75,20 +72,21 @@ usersRef.on("value", snap => {
 // -------------------------------------------------------
 //Show User Detail on li click:
 function userClicked(e) {
-   
+  
     var userID = e.target.getAttribute("user-key");
-
     const userRef = dbRef.child('users/' + userID);
 
     const userDetailUI = document.getElementById("userDetail");
     userDetailUI.innerHTML = ""
   
     userRef.on("child_added", snap => {
-
         var $p = document.createElement("p");
         $p.innerHTML = snap.key + " - " + snap.val()
         userDetailUI.append($p);
     });
+
+    
+    e.preventDefault()
   
 }
 // ^^^ userID: get the child-key attribute on clicking the username (li)
