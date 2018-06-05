@@ -37,19 +37,19 @@ usersRef.on("child_added", snap => {
 function userClicked(e) {
 
     var userID = e.target.getAttribute("child-key");
-  
+
     const userRef = dbRef.child('users/' + userID);
-  
+
     const userDetailUI = document.getElementById("userDetail");
     userDetailUI.innerHTML = ""
   
     userRef.on("child_added", snap => {
-      var $p = document.createElement("p");
-      $p.innerHTML = snap.key + " - " + snap.val()
-      userDetailUI.append($p);
+        var $p = document.createElement("p");
+        $p.innerHTML = snap.key + " - " + snap.val()
+        userDetailUI.append($p);
     });
   
-  }
+}
 
 // userID: get the child-key attribute on clicking the username (li)
 // userRef: This time the root is “users/” +  userID. which will give us a specific user object when we use child_added event.
@@ -63,3 +63,35 @@ function userClicked(e) {
 //I hope I convinced you to use push() method. 🙂
 
 // Oh. Let me explain other two methods set() and update() later in the  STEP #2 Update section.
+
+// Attach Click Event to the Add User Button: Cache #add-user-btn DOM element which is inside the Add User Form. Then, attach a click event to it with the callback function addUserBtnClicked().
+const addUserBtnUI = document.getElementById("add-user-btn");
+addUserBtnUI.addEventListener("click", addUserBtnClicked);
+
+// Create a new user Object: Inside the call back function, create a Firebase Database reference path where you want to insert the new user data.
+const usersRef = dbRef.child('users');
+
+// then, Get all the input fields from the Add User Form and cache them into an array variable addUserInputsUI like so.
+const addUserInputsUI = document.getElementsByClassName("user-input");
+
+// this object will hold the new user information
+let newUser = {};
+
+// Now, Loop though addUserInputsUI array that has three input fields. 
+// loop through View to get the data for the model 
+for (let i = 0, len = addUserInputsUI.length; i < len; i++) {
+
+    // Then, Inside each iteration get the value of input attribute data-key and store it into the variable 'key'.
+    let key = addUserInputsUI[i].getAttribute('data-key');
+    // After that… create another variable called 'value' and store in it the actual user typed value.
+    let value = addUserInputsUI[i].value;
+    
+    //Assign the 'key' and 'value' variables to the newUser object on each iteration. So, you will have an object something like this.
+    // {
+    //     "age" : "21",
+    //     "email" : "rtamil@email.com",
+    //     "name" : "Raja Tamil"
+    // }
+    newUser[key] = value;
+
+}
