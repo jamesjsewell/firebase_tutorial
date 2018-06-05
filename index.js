@@ -8,16 +8,56 @@ const usersRef = dbRef.child('users');
 // -------------------------------------------------------
 // userListUI: Get a DOM element reference for userList
 const userListUI = document.getElementById("userList");
-
+const userDetailUI = document.getElementById("userDetail");
 //Get User List using Child_Added() method:
-usersRef.on("child_added", snap => {
-    let user = snap.val();
-    let $li = document.createElement("li");
-    $li.innerHTML = user.name;
-    $li.setAttribute("child-key", snap.key); 
-    $li.addEventListener("click", userClicked)
-    userListUI.append($li);
-});
+// usersRef.on("child_added", snap => {
+//     let user = snap.val();
+//     let $li = document.createElement("li");
+//     $li.innerHTML = user.name;
+//     $li.setAttribute("child-key", snap.key); 
+//     $li.addEventListener("click", userClicked)
+//     userListUI.append($li);
+// });
+
+usersRef.on("value", snap => {
+
+    userListUI.innerHTML = ""
+    userDetailUI.innerHTML = ""
+
+    snap.forEach(childSnap => {
+
+        let key = childSnap.key,
+            value = childSnap.val()
+          
+        let $li = document.createElement("li");
+
+        // edit icon
+        let editIconUI = document.createElement("span");
+        editIconUI.class = "edit-user";
+        editIconUI.innerHTML = " ✎";
+        editIconUI.setAttribute("userid", key);
+        editIconUI.addEventListener("click", editButtonClicked)
+
+        // delete icon
+        let deleteIconUI = document.createElement("span");
+        deleteIconUI.class = "delete-user";
+        deleteIconUI.innerHTML = " ☓";
+        deleteIconUI.setAttribute("userid", key);
+        deleteIconUI.addEventListener("click", deleteButtonClicked)
+        
+        $li.innerHTML = `<a class="userLink" href="">${value.name}</a>`;
+        $li.className = "a_user"
+        $li.append(editIconUI);
+        $li.append(deleteIconUI);
+
+        $li.setAttribute("user-key", key);
+        $li.addEventListener("click", userClicked)
+        userListUI.append($li);
+
+     });
+
+
+})
 // ^^^ child_added: Attach a child_added event to the userRef database reference object. It is a Firebase event similar to click event in JavaScript and it typically retrieves a list of items from the Firebase database.
 // callback: This event takes TWO arguments,  a string “child_added” and the callback which will run on each interaction.
 // snap: In each interaction snap object, which is a parameter of the callback,  will hold information about a single user item that we can have access to.
@@ -35,8 +75,8 @@ usersRef.on("child_added", snap => {
 // -------------------------------------------------------
 //Show User Detail on li click:
 function userClicked(e) {
-
-    var userID = e.target.getAttribute("child-key");
+   
+    var userID = e.target.getAttribute("user-key");
 
     const userRef = dbRef.child('users/' + userID);
 
@@ -44,6 +84,7 @@ function userClicked(e) {
     userDetailUI.innerHTML = ""
   
     userRef.on("child_added", snap => {
+
         var $p = document.createElement("p");
         $p.innerHTML = snap.key + " - " + snap.val()
         userDetailUI.append($p);
@@ -134,51 +175,44 @@ function addUserBtnClicked(){
 
 // • If you want to intentionally change any user object value to be null, set() method would be great for it.
 
-// Add Edit button: Add Edit icon (✎) inside <li> via JavaScript
-// edit icon
-let editIconUI = document.createElement("span");
-editIconUI.class = "edit-user";
-editIconUI.innerHTML = " ✎";
-editIconUI.setAttribute("userid", key);
-editIconUI.addEventListener("click", editButtonClicked)
-// Append after li.innerHTML = value.name
-$li.append(editIconUI);
-// ^^^ Create editIconUI span element,  then attach a click event to it with a callback function editButtonClicked().
-// Make sure to append editIconUI to <li> after appending li.innerHTML, so that the edit icon will be shown after the username text.
 
-// Show Edit Form with the User Data: Get the Edit User Form DOM element and set the display property to block which makes the Form visible.
-// show the Edit User Form
-document.getElementById('edit-user-module').style.display = "block";
+function editButtonClicked(e){
 
-// Then, assign user id which you get from the edit button with an attribute userid to the hidden <input> text field edit-userid. So that I will have user id is available when I click the save button from the Edit From to update the user data later.
-//set user id to the hidden input field
-document.querySelector(".edit-userid").value = e.target.getAttribute("userid");
+    // Show Edit Form with the User Data: Get the Edit User Form DOM element and set the display property to block which makes the Form visible.
+    // show the Edit User Form
+    document.getElementById('edit-user-module').style.display = "block";
 
-// After that,  create a Firebase Database reference path where to get selected user data by userid.
-const userRef = dbRef.child('users/' + e.target.getAttribute("userid"));
+    // Then, assign user id which you get from the edit button with an attribute userid to the hidden <input> text field edit-userid. So that I will have user id is available when I click the save button from the Edit From to update the user data later.
+    //set user id to the hidden input field
+    document.querySelector(".edit-userid").value = e.target.getAttribute("userid");
 
-// Next, create a variable that will have all the input fields from the Edit User Form
-// set data to the user field
-const editUserInputsUI = document.querySelectorAll(".edit-user-input");
+    // After that,  create a Firebase Database reference path where to get selected user data by userid.
+    const userRef = dbRef.child('users/' + e.target.getAttribute("userid"));
 
-// Now, I am going to define a firebase event called  “value” on the userRef variable. The second argument in that event is a call back function with parameter snap which will have the selected user data.
-userRef.on("value", snap => {
-    
-    for(var i = 0, len = editUserInputsUI.length; i < len; i++) {
-        var key = editUserInputsUI[i].getAttribute("data-key");
-        editUserInputsUI[i].value = snap.val()[key];
-    }
+    // Next, create a variable that will have all the input fields from the Edit User Form
+    // set data to the user field
+    const editUserInputsUI = document.querySelectorAll(".edit-user-input");
 
-});
-// ^^^ Inside that callback event, loop through the editUserInputsUI array and get the value of an attribute data-key on each iteration and store it in a variable key. So that I can assign an appropriate value from snap.val()[key] to the input field.
+    // Now, I am going to define a firebase event called  “value” on the userRef variable. The second argument in that event is a call back function with parameter snap which will have the selected user data.
+    userRef.on("value", snap => {
+        
+        for(var i = 0, len = editUserInputsUI.length; i < len; i++) {
+            var key = editUserInputsUI[i].getAttribute("data-key");
+            editUserInputsUI[i].value = snap.val()[key];
+        }
 
-// At this stage, a user will be able to see the Edit User Form with selected user data filled in when the edit button is clicked.
+    });
+    // ^^^ Inside that callback event, loop through the editUserInputsUI array and get the value of an attribute data-key on each iteration and store it in a variable key. So that I can assign an appropriate value from snap.val()[key] to the input field.
 
-// Save the updated user data on to the Firebase Database: When a user makes some changes and hit save button, the edited data will be saved to the Firebase database.
-// To do that, Get a save button and attach a click event to that with the callback function editButtonClicked(). 
-const saveBtn = document.querySelector("#edit-user-btn");
-saveBtn.addEventListener("click", saveUserBtnClicked)
-// ^^ As you can see I have created saveBtn and  attach click event with the callback function saveUserBtnClicked. 
+    // At this stage, a user will be able to see the Edit User Form with selected user data filled in when the edit button is clicked.
+
+    // Save the updated user data on to the Firebase Database: When a user makes some changes and hit save button, the edited data will be saved to the Firebase database.
+    // To do that, Get a save button and attach a click event to that with the callback function editButtonClicked(). 
+    const saveBtn = document.querySelector("#edit-user-btn");
+    saveBtn.addEventListener("click", saveUserBtnClicked)
+    // ^^ As you can see I have created saveBtn and  attach click event with the callback function saveUserBtnClicked. 
+
+}
 
 
 function saveUserBtnClicked(){
@@ -206,7 +240,7 @@ function saveUserBtnClicked(){
     // Now, you will have an object that is ready to update.
 
     // Finally, user update() method.
-    userRef.update(editUser, function(){
+    userRef.update(editedUserObject, function(){
 
         console.log("user has been updated"); 
 
@@ -218,3 +252,28 @@ function saveUserBtnClicked(){
 }
 // -------------------------------------------------------
 
+// -------------------------------------------------------
+//PART 2, STEP 3: DELETE DATA
+
+// remove(data, callback)
+// The remove() method will remove everything from a given database reference path and it takes two arguments, one is the data in this case user id and the callback function that will run once the delete operation is completed.
+
+// If you want to keep the userid and remove all the data inside it, you could use set() to replace with null
+
+//  Add a Delete Icon to the <li>
+
+// delete icon
+// let deleteIconUI = document.createElement("span");
+// deleteIconUI.class = "delete-user";
+// deleteIconUI.innerHTML = " ☓";
+// deleteIconUI.setAttribute("userid", key);
+// deleteIconUI.addEventListener("click", deleteButtonClicked)
+
+// $li.append(deleteIconUI)
+
+function deleteButtonClicked(e) {
+    e.stopPropagation();
+    const userID = e.target.getAttribute("userid");
+    const userRef = dbRef.child('users/' + userID);
+    userRef.remove()
+  }
