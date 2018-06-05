@@ -13,15 +13,36 @@
     <h1>Firebase CRUD with Vanilla Javascript<br/>
     <small><em>01 Read Data</em></small></h1>
         
-    <ul class="userList"></ul>
+    <!-- list of users -->
+    <ul id="userList"></ul>
     
-    <div class="userDetail">
+    <!-- show user details -->
+    <div id="userDetail">
         <p >Name :<strong class="detailName"></strong></p>
         <p >Age: <strong class="detailAge"></strong></p>
         <p >Email: <strong class="detailEmail"></strong></p>
     </div>
+
+    <!-- add user module -->
+    <section id="add-user-module" >
+        <button id="open-add-user-form-btn">+</button>
+        <form>
+            <h2>Add User</h2>
+            name:<br>
+            <input type='text' data-key='name' class='user-input'><br>
+            age:<br>
+            <input type='text' data-key='age' class='user-input'><br>
+            email:<br>
+            <input type='text' data-key='email' class='user-input'><br>
+            <button type='button' id="add-user-btn">add user</button>
+        </form>
+    </section>
     
-    <script src="environment_vars.js" />
+    <!-- gets the variables used in the initialize Firebase script below -->
+    <script src="environment_vars.js"></script>
+
+    <!-- initializes firebase, find this code for your project by going to the
+    "Project Overview" tab and click the "Add Firebase to your web app button" -->
     <script >
 
         // Initialize Firebase
@@ -33,9 +54,12 @@
         storageBucket: "",
         messagingSenderId: SENDER_ID
         };
+
         firebase.initializeApp(config);
+
     </script>
-    <script src="index.js" />
+
+    <script src="index.js"></script>
 
 </body>
 </html>
