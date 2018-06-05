@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Firebase CRUD with Vanilla Javascript<br/>
+    <small><em>01 Read Data</em></small></h1>
+        
+    <ul class="userList"></ul>
+    
+    <div class="userDetail">
+        <p >Name :<strong class="detailName"></strong></p>
+        <p >Age: <strong class="detailAge"></strong></p>
+        <p >Email: <strong class="detailEmail"></strong></p>
+    </div>
+    
+    <script src="environment_vars.js" />
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+        apiKey: API_KEY,
+        authDomain: AUTH_DOMAIN,
+        databaseURL: DATABASE_URL,
+        projectId: PROJECT_ID,
+        storageBucket: "",
+        messagingSenderId: SENDER_ID
+        };
+        firebase.initializeApp(config);
+    </script>
+
+</body>
+</html>
